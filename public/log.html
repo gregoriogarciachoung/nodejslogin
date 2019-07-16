@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="stylesheets/e.css">
+	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<!-- Compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  </head>
+
+  <body ng-app="app" ng-controller="control">
+  <div class="login card-panel">
+  <div class="center"><i class="material-icons large">account_circle</i></div>
+    <div class="row">
+    <form class="col s12">
+     <div class="row">
+        <div class="input-field col s12">
+          <input id="email" type="email" class="validate" ng-model="usu">
+          <label for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="password" type="password" class="validate" ng-model="pass">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      
+     <button class="btn waves-effect waves-light " type="submit" ng-click="login()">Login
+  </button>
+  
+  <button class="btn waves-effect waves-light " type="submit" ng-click="ver()">ver
+  </button>
+    </form>
+  </div>
+  </div>
+  </body>
+
+  <script>	
+			
+var app = angular.module('app', []);
+app.controller('control', function($scope, $http) {
+
+  $scope.login = function(){
+		var parametros = {
+                "clave" : $scope.pass,
+                "correo" : $scope.usu,
+        };
+		$http({
+			method: 'POST',
+			url: 'api/login', 
+			data: parametros
+			}).then(function (response) {
+			var tkm = response.data.token;alert("bienvenido");
+			//alert(tkm);
+			if (typeof(Storage) !== "undefined") {
+			  // Store
+			  localStorage.setItem("lastname", "Bearer "+tkm);
+			  // Retrieve
+			  //document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+			} else {
+			  //document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+			}
+			
+			/*var headers = new Headers();
+			headers.append('Content-Type', 'application/json', 'charset=utf-8;')
+			headers.append('authorization', "Bearer "+localStorage.getItem("lastname"));*/
+			
+		}, function (error) {
+		alert("Usuario no existe");
+		});
+		
+	}
+	 $scope.ver = function(){
+		//cambiar a method: 'POST', url: 'api/posts
+		$http({
+			method: 'post',
+			url: 'api/posts',
+			contentType: 'application/json',
+			headers: {
+                    "authorization": localStorage.getItem("lastname")
+                 },
+			}).then(function (response) {
+			alert(response.data.message);
+		}, function (error) {
+		//alert(error.data);
+		});
+		
+	}
+});
+</script>
+</html>
